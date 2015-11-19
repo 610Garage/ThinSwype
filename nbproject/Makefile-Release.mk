@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/Config.o \
+	${OBJECTDIR}/EDCrypt.o \
 	${OBJECTDIR}/Log.o \
 	${OBJECTDIR}/R_NFC.o \
 	${OBJECTDIR}/UserInfo.o \
@@ -72,6 +73,11 @@ ${OBJECTDIR}/Config.o: Config.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Config.o Config.c
+
+${OBJECTDIR}/EDCrypt.o: EDCrypt.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/EDCrypt.o EDCrypt.c
 
 ${OBJECTDIR}/Log.o: Log.c 
 	${MKDIR} -p ${OBJECTDIR}

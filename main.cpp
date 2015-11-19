@@ -53,7 +53,7 @@ static void stop_polling(int sig){//sombody wants out, lets close out nicely
     nfc_abort_command(RT.device);//CLEAR!!!!
   else {//Well, no comand to stop, lets close out
     nfc_exit(RT.context);//release stuff, I assume
-    StopRDesktop();//Lets leave a clean enviroment. Stop the Remote desktop!
+    StopRDesktop(&conf);//Lets leave a clean enviroment. Stop the Remote desktop!
     exit(EXIT_SUCCESS);//and were done
   }
 }
@@ -92,7 +92,7 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
                         if(Credentials_Check(&crd)){//YEa, its ndef info, and its good. But are the credentials complete and secure?
                             MyLog("Card credentials are good", 3);//yup, good credentials, tell the world, well the log anyway.
                             
-                            StopRDesktop();//kill any running remote desktops
+                            StopRDesktop(&conf);//kill any running remote desktops
                             sleep(1);//give it a second..... literly
                             StartRDesktop(&crd, &conf);//start the remote desktop with the new credentials
                             MyLog("VM loded, all done", 3);//tell the log, if anyone cares
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
         nfc_abort_command(RT.device);//stop any pending comands to the tag reader
     }
     nfc_exit(RT.context);//release stuff, I assume
-    StopRDesktop();//Lets leave a clean enviroment. Stop the Remote desktop!
+    StopRDesktop(&conf);//Lets leave a clean enviroment. Stop the Remote desktop!
     exit(EXIT_SUCCESS);//exit, its all good
     
 }
