@@ -12,32 +12,34 @@
 #include "R_NFC.h"
 #include "UserInfo.h"
 #include "Log.h"
+#include "Config.h"
 
 using namespace std;
 
 static ReaderTag RT;//contains libnfcs context, device, and tag info
 static mifareul_tag mtDump;//varible that stores the data on the tag
 
-Credentials crd;//holds the user name, password, and vm adress
+static Credentials crd;//holds the user name, password, and vm adress
+static Config conf; //holds the configuraton read from the config file, needs to be static. Mabey somthing else uses a varible called conf
 
-bool run = true;//keeps the main loop alive until we want IT DEAD!!!!!
+static bool run = true;//keeps the main loop alive until we want IT DEAD!!!!!
 
 
-void StartRDesktop(Credentials *crd){//Well, its the whole reason for the app, lets get to it.
+void StartRDesktop(Credentials *crd, Config *cf){//Well, its the whole reason for the app, lets get to it.
     char cmd[200];// temp holding buffer for the comand to be exicuted
     memset(cmd, 0x00, sizeof(cmd));//I like clean slaights
     //the comand with the loging credentials
-    snprintf(cmd,200,"startx /usr/bin/nice -n 18 /usr/bin/rdesktop -a 24 -x 6 -P -r sound:local -u \"%s\" -p \"%s\" -f \"%s\" 2>&1",crd->user,crd->password, crd->VM);
+    snprintf(cmd,200,cf->RemoteStartCMD,crd->user,crd->password, crd->VM);
     MyLog(cmd,3);//Log, just incase stuff goes goofy
     popen(cmd, "r");//Exicute the comand and be amazed AT THE POWER OF THE TAG!!!
     //while(1);
 }
 
-void StopRDesktop(){//
+void StopRDesktop(Config *cf){//
     char cmd[200];// temp holding buffer for the comand to be exicuted
     memset(cmd, 0x00, sizeof(cmd));//I like clean slaights
     //The death comands
-    snprintf(cmd,200,"pkill -15 rdesktop");
+    snprintf(cmd,200,cf->RemoteStopCMD);
     MyLog(cmd,3);//Log, just incase stuff goes goofy
     popen(cmd, "r");//Exicute the comand to exicute the remote desktop
 }
@@ -65,6 +67,8 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
     
     signal(SIGINT, stop_polling);//register the exit function
     
+    readConfig(&conf);
+    
     
     nfc_init(&RT.context);//init libnfc
     
@@ -90,7 +94,7 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
                             
                             StopRDesktop();//kill any running remote desktops
                             sleep(1);//give it a second..... literly
-                            StartRDesktop(&crd);//start the remote desktop with the new credentials
+                            StartRDesktop(&crd, &conf);//start the remote desktop with the new credentials
                             MyLog("VM loded, all done", 3);//tell the log, if anyone cares
                         }
                     }

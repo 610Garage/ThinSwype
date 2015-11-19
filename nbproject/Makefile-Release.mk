@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/Config.o \
 	${OBJECTDIR}/Log.o \
 	${OBJECTDIR}/R_NFC.o \
 	${OBJECTDIR}/UserInfo.o \
@@ -66,6 +67,11 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/thinswype: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/thinswype ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/Config.o: Config.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Config.o Config.c
 
 ${OBJECTDIR}/Log.o: Log.c 
 	${MKDIR} -p ${OBJECTDIR}
