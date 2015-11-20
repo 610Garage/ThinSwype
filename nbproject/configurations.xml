@@ -4,6 +4,8 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>Config.h</itemPath>
+      <itemPath>EDCrypt.h</itemPath>
       <itemPath>Log.h</itemPath>
       <itemPath>R_NFC.h</itemPath>
       <itemPath>UserInfo.h</itemPath>
@@ -17,6 +19,8 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>Config.c</itemPath>
+      <itemPath>EDCrypt.c</itemPath>
       <itemPath>Log.c</itemPath>
       <itemPath>R_NFC.c</itemPath>
       <itemPath>UserInfo.c</itemPath>
@@ -54,7 +58,6 @@
         <linkerTool>
           <linkerLibItems>
             <linkerOptionItem>`pkg-config --libs libnfc`</linkerOptionItem>
-            <linkerOptionItem>`pkg-config --libs pthread-stubs`</linkerOptionItem>
             <linkerOptionItem>`pkg-config --libs libcrypto`</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>

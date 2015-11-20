@@ -29,6 +29,8 @@ extern "C" {
         int LogLevel;
         char RemoteStartCMD[Max_CMD_LEGNTH];
         char RemoteStopCMD[Max_CMD_LEGNTH];
+        unsigned char Key[32];
+        unsigned char IV[16];
     } Config;
     
 void NewConfig();

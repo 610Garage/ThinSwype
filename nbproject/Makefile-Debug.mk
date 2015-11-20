@@ -59,7 +59,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=`pkg-config --libs libnfc` `pkg-config --libs pthread-stubs` `pkg-config --libs libcrypto`  
+LDLIBSOPTIONS=`pkg-config --libs libnfc` `pkg-config --libs libcrypto`  
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -72,47 +72,47 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/thinswype: ${OBJECTFILES}
 ${OBJECTDIR}/Config.o: Config.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Config.o Config.c
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Config.o Config.c
 
 ${OBJECTDIR}/EDCrypt.o: EDCrypt.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/EDCrypt.o EDCrypt.c
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/EDCrypt.o EDCrypt.c
 
 ${OBJECTDIR}/Log.o: Log.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Log.o Log.c
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Log.o Log.c
 
 ${OBJECTDIR}/R_NFC.o: R_NFC.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/R_NFC.o R_NFC.c
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/R_NFC.o R_NFC.c
 
 ${OBJECTDIR}/R_NFC.h.gch: R_NFC.h 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o "$@" R_NFC.h
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o "$@" R_NFC.h
 
 ${OBJECTDIR}/UserInfo.o: UserInfo.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/UserInfo.o UserInfo.c
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/UserInfo.o UserInfo.c
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.cc) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	$(COMPILE.cc) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
 
 ${OBJECTDIR}/mifare.o: mifare.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mifare.o mifare.c
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/mifare.o mifare.c
 
 ${OBJECTDIR}/nfc-utils.o: nfc-utils.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags pthread-stubs` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/nfc-utils.o nfc-utils.c
+	$(COMPILE.c) -g `pkg-config --cflags libnfc` `pkg-config --cflags libcrypto`   -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/nfc-utils.o nfc-utils.c
 
 # Subprojects
 .build-subprojects:

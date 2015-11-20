@@ -17,9 +17,9 @@
 using namespace std;
 
 static ReaderTag RT;//contains libnfcs context, device, and tag info
-static mifareul_tag mtDump;//varible that stores the data on the tag
+mifareul_tag mtDump;//varible that stores the data on the tag
 
-static Credentials crd;//holds the user name, password, and vm adress
+Credentials crd;//holds the user name, password, and vm adress
 static Config conf; //holds the configuraton read from the config file, needs to be static. Mabey somthing else uses a varible called conf
 
 static bool run = true;//keeps the main loop alive until we want IT DEAD!!!!!
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
     
     signal(SIGINT, stop_polling);//register the exit function
     
-    readConfig(&conf);
+    readConfig(&conf);//get the configuration
     
     
     nfc_init(&RT.context);//init libnfc
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
         
             if(ScanForTag(&RT)){//start polling for a tag
                 if(N_read_card(RT,&mtDump)){//found a tag, good. Whats on it though. Is it readable?
-                    if(NDDEF_DEGenerate(&crd, &mtDump)){//Great, its readable. Lets get that ndef info off. If it is ndef info that is.
+                    if(NDDEF_DEGenerate(&crd, &mtDump,&conf)){//Great, its readable. Lets get that ndef info off. If it is ndef info that is.
                         if(Credentials_Check(&crd)){//YEa, its ndef info, and its good. But are the credentials complete and secure?
                             MyLog("Card credentials are good", 3);//yup, good credentials, tell the world, well the log anyway.
                             

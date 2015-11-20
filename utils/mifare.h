@@ -136,7 +136,7 @@ typedef union {
 } mifareul_block;
 
 typedef struct {
-  mifareul_block amb[7];
+  mifareul_block amb[10];
 } mifareul_tag;
 
 // Reset struct alignment to default

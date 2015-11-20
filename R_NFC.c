@@ -4,6 +4,8 @@
 
 #include "R_NFC.h"
 #include "Log.h"
+#include "EDCrypt.h"
+#include "Config.h"
 
 
 char mdefMSG[MAX_MDEF_MSG_LENGTH];
@@ -32,15 +34,19 @@ int res;
  * 
  */
 
-bool NDDEF_DEGenerate(Credentials * Payload, mifareul_tag * tag){
-    
+bool NDDEF_DEGenerate(Credentials * Payload, mifareul_tag * tag, Config * cf){
+    int DPlegnth;//Length of the decrypted message
     char buffer[100];//buffer to store tag payload
     char buffer2[MAX_MDEF_MSG_LENGTH];//buffer to store ndef payload
     char * TLV_start;//pointer to the start of the TLV header
-    char NDEF_size;
+    char NDEF_size;//size of just the NDEF message
+    unsigned char DecryptedBuffer[140];//a buffer that stores the decrypted data
     
+    //clean the buffer with acid, or empty space
+    memset(DecryptedBuffer, 0x00, 140);
+    memset(buffer2,0x00,MAX_MDEF_MSG_LENGTH);
     
-    for(int i=1; i<6;i++){//itterate through all pages and laod them into a single buffer
+    for(int i=1; i<8;i++){//itterate through all pages and laod them into a single buffer
         memcpy(&buffer[i*16-16],tag->amb[i].mbd.abtData,16);//coppy the tag info, 16 bytes at a time. DOn't know why 16 though.
     }
     
@@ -54,12 +60,14 @@ bool NDDEF_DEGenerate(Credentials * Payload, mifareul_tag * tag){
     memcpy(buffer2,&TLV_start[2],NDEF_size);//copy just the ndef message to the second buffer. use the mesage size we got erlier.
     
     //lets be as sure as possible that were deiling with good data. This makes sure that the ndef header looks like the ndef header we expect.
-    if(buffer2[0] != DefualtHeader[2] || buffer2[1] != DefualtHeader[3] || buffer2[3] != DefualtHeader[5] || buffer2[2] != sizeof(*Payload)){
+    if(buffer2[0] != DefualtHeader[2] || buffer2[1] != DefualtHeader[3] || buffer2[3] != DefualtHeader[5]){
         //Well somthing went wrong... RUNN!!!!
         return(false);
     }
+      
+    DPlegnth = decrypt(&buffer2[4], (int)buffer2[2], cf->Key, cf->IV,DecryptedBuffer);//decrypt the payload
     
-    memcpy(Payload,&buffer2[4], buffer[2]);//coppy the ndef payload to the credentials struct. Buffer[2] holds the message legnth.]
+    memcpy(Payload,DecryptedBuffer, DPlegnth);//coppy the ndef payload to the credentials struct. Buffer[2] holds the message legnth.]
     return(true);//Its all good, let the caller know
 }
 
@@ -73,7 +81,7 @@ bool N_read_card(ReaderTag rt,mifareul_tag * tag){
     
   uint32_t page;
   bool    bFailure = false;
-  uint32_t uiBlocks = 20;
+  uint32_t uiBlocks = 30;
   
   memset(LogBuffer, 0x00, LOG_BUFFER_LEGNTH);
   sprintf(LogBuffer, "Reading %d pages |", uiBlocks + 1);

@@ -13,11 +13,12 @@
     extern "C" {
     #endif
 
-        #include <nfc/nfc.h>
-        #include "utils/nfc-utils.h"
-        #include "utils/mifare.h"
+#include <nfc/nfc.h>
+#include "utils/nfc-utils.h"
+#include "utils/mifare.h"
 
-        #include "UserInfo.h"
+#include "UserInfo.h"
+#include "Config.h"
 
         #define MAX_MDEF_MSG_LENGTH 1024
         #define PAYLOAD_LEGNTH 4
@@ -38,7 +39,7 @@
         #define szModulations 2
 
 
-        bool NDDEF_DEGenerate(Credentials * Payload, mifareul_tag * tag);
+        bool NDDEF_DEGenerate(Credentials * Payload, mifareul_tag * tag, Config * cf);
         bool TagInit(ReaderTag *rt);
         bool ScanForTag(ReaderTag *rt);
         bool N_read_card(ReaderTag rt,mifareul_tag * tag);

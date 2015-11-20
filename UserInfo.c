@@ -4,6 +4,7 @@
 
 #include "UserInfo.h"
 #include "Log.h"
+#include "EDCrypt.h"
 
 
 /**
@@ -13,6 +14,9 @@
  * Whether the credentials are good or not
  */
 bool Credentials_Check(Credentials *crd){
+    
+    
+    
     //making sure that ervything is as long as we expect. Also inspecting for " marks
     if(crd->PLegnth == strlen(crd->password) && crd->ULegnth == strlen(crd->user) && crd->VLegnth && strlen(crd->VM) && memchr(crd, '"',sizeof(*crd)) == NULL){
         MyLog("Credentials check is good",3);// tell the log

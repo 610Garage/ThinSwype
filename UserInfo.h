@@ -11,6 +11,7 @@
 #define Max_User_Legnth 12
 #define Max_Password_Legnth 30
 #define Max_VM_Legnth 24
+#define CREDENTIALS_PADDING 11
 
 typedef struct{
     char user[Max_User_Legnth];

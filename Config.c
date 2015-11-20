@@ -71,6 +71,9 @@ int GetFLine(char* buffer, FILE * pFile){
  * amount of chars in the line buffer
  * @param cf
  * a pointer to the config struct
+ * 
+ * To do
+ * Add fail safes
  */
 void ParseFileLine(char * line, int count, Config * cf){
     if(!memcmp(line,"Log Level=", sizeof("Log Level=")-1)){//checks to see if the line begines with "Log Level="
@@ -84,9 +87,22 @@ void ParseFileLine(char * line, int count, Config * cf){
         memcpy(cf->RemoteStartCMD, &line[sizeof("Remote start CMD=")-1], count - (sizeof("Remote start CMD=")-1));
         return;
     }
+    
     if(!memcmp(line,"Remote stop CMD=", sizeof("Remote stop CMD=")-1)){
         memset(cf->RemoteStopCMD, 0x00, Max_CMD_LEGNTH);
         memcpy(cf->RemoteStopCMD, &line[sizeof("Remote stop CMD=")-1], count- (sizeof("Remote stop CMD=")-1));
+        return;
+    }
+    
+    if(!memcmp(line,"Key=", sizeof("Key=")-1)){
+        memset(cf->Key, 0x00, 32);
+        memcpy(cf->Key, &line[sizeof("Key=")-1], 32);
+        return;
+    }
+    
+    if(!memcmp(line,"IV=", sizeof("IV=")-1)){
+        memset(cf->IV, 0x00, 16);
+        memcpy(cf->IV, &line[sizeof("IV=")-1], 16);
         return;
     }
 }
@@ -117,6 +133,14 @@ void UpdateConfigFile(Config * conf){
     
     memset(buffer,0x00,200);
     snprintf(buffer, 300, "Remote stop CMD=%s\n",conf->RemoteStopCMD);
+    fputs(buffer, pFile);
+    
+    memset(buffer,0x00,200);
+    snprintf(buffer, 300, "Key=%s\n",conf->Key);
+    fputs(buffer, pFile);
+    
+    memset(buffer,0x00,200);
+    snprintf(buffer, 300, "IV=%s\n",conf->IV);
     fputs(buffer, pFile);
     
     fclose(pFile);//close the file
@@ -192,6 +216,36 @@ void NewConfig(Config * conf){
             break;
         }else{
             memcpy(conf->RemoteStopCMD, consoleInput, count);
+
+            break;
+        }
+    }
+    
+    printf("Enter encryption key\n");
+    
+    while(1){//same as above ^^^^
+        count = GetCLine(consoleInput);
+        if(count != 33){
+            printf("Key should be 32 characters long\n");
+        }else if(consoleInput[0] == '\n'){
+            printf("No defualt available. DUH!\n");
+        }else{
+            memcpy(conf->Key, consoleInput, 32);
+
+            break;
+        }
+    }
+    
+    printf("Enter encryption IV\n");
+    
+    while(1){//same as above ^^^^
+        count = GetCLine(consoleInput);
+        if(count > 17){
+            printf("IV should be 16 characters long\n");
+        }else if(consoleInput[0] == '\n'){
+            printf("No defualt available. DUH!\n");
+        }else{
+            memcpy(conf->IV, consoleInput, 16);
 
             break;
         }
