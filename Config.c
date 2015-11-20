@@ -75,7 +75,7 @@ int GetFLine(char* buffer, FILE * pFile){
  * To do
  * Add fail safes
  */
-void ParseFileLine(char * line, int count, Config * cf){
+void ParseFileLine(char * line, int count, Config * cf, FILE * pFile){
     if(!memcmp(line,"Log Level=", sizeof("Log Level=")-1)){//checks to see if the line begines with "Log Level="
         cf->LogLevel = atoi(&line[sizeof("Log Level=")-1]);//it does, so copy everything past "Log Level=" to the config strut
         return;//thats all
@@ -94,17 +94,14 @@ void ParseFileLine(char * line, int count, Config * cf){
         return;
     }
     
-    if(!memcmp(line,"Key=", sizeof("Key=")-1)){
-        memset(cf->Key, 0x00, 32);
-        memcpy(cf->Key, &line[sizeof("Key=")-1], 32);
+    
+    if(!memcmp(line,"enc=", sizeof("enc=")-1)){
+        //Its the encryption data, this needs to be handled diferently
+        fseek(pFile,-(count- (sizeof("enc=")-1)),SEEK_CUR);//find the begining of the data
+        fread(&cf->key, sizeof(char), sizeof(cf->key),pFile );//then read the file to the KEY block
         return;
     }
     
-    if(!memcmp(line,"IV=", sizeof("IV=")-1)){
-        memset(cf->IV, 0x00, 16);
-        memcpy(cf->IV, &line[sizeof("IV=")-1], 16);
-        return;
-    }
 }
 /**
  * create a new config file
@@ -115,7 +112,7 @@ void UpdateConfigFile(Config * conf){
     FILE * pFile;//contains the file stuff
     char buffer[300];//the buffer that contains 
         
-    pFile = fopen(CONFIG_FILE, "w+");//open the file with write and creation permitions
+    pFile = fopen(CONFIG_FILE, "wb+");//open the file with write and creation permitions
     
     if(pFile == NULL){//check to see if the file exists
         printf("Couldn't open file");//let the user know that we couldn't go any further
@@ -136,13 +133,12 @@ void UpdateConfigFile(Config * conf){
     fputs(buffer, pFile);
     
     memset(buffer,0x00,200);
-    snprintf(buffer, 300, "Key=%s\n",conf->Key);
-    fputs(buffer, pFile);
+    snprintf(buffer, 300, "enc=");
+    memcpy(&buffer[4],&conf->key, sizeof(conf->key));
+    buffer[4+sizeof(conf->key)+1] = '\n';
+    fwrite(buffer,sizeof(char),4+sizeof(conf->key)+1, pFile);
     
-    memset(buffer,0x00,200);
-    snprintf(buffer, 300, "IV=%s\n",conf->IV);
-    fputs(buffer, pFile);
-    
+   
     fclose(pFile);//close the file
 }
 
@@ -221,35 +217,22 @@ void NewConfig(Config * conf){
         }
     }
     
-    printf("Enter encryption key\n");
+    printf("Enter password\n");
     
     while(1){//same as above ^^^^
         count = GetCLine(consoleInput);
-        if(count != 33){
-            printf("Key should be 32 characters long\n");
+        if(count > MAX_PASSWORD_LEGNTH){
+            printf("Password too long, needs to be shorter than %i\n",MAX_PASSWORD_LEGNTH);
         }else if(consoleInput[0] == '\n'){
-            printf("No defualt available. DUH!\n");
+            printf("No defualt available. DUH!\n");//theres no defualt password
         }else{
-            memcpy(conf->Key, consoleInput, 32);
-
+            consoleInput[count-1] = 0x00;//get rid of the new line character
+            keyGen(&conf->key, consoleInput);//generate the keys from the password
             break;
         }
     }
     
-    printf("Enter encryption IV\n");
     
-    while(1){//same as above ^^^^
-        count = GetCLine(consoleInput);
-        if(count > 17){
-            printf("IV should be 16 characters long\n");
-        }else if(consoleInput[0] == '\n'){
-            printf("No defualt available. DUH!\n");
-        }else{
-            memcpy(conf->IV, consoleInput, 16);
-
-            break;
-        }
-    }
     printf("done\n");
     UpdateConfigFile(conf);//we got the new data, update the config file.
 }
@@ -265,7 +248,7 @@ bool readConfig(Config * conf){
    FILE * pFile;
    int count = 0;
     
-   pFile = fopen (CONFIG_FILE , "r");//open the config file with read only permisions
+   pFile = fopen (CONFIG_FILE , "rb");//open the config file with read only permisions
    if (pFile == NULL){
        perror("fopen");//it proably dosn't exist, but tell the user the problem anyway
        NewConfig(conf);//lets creat a new config file
@@ -273,7 +256,7 @@ bool readConfig(Config * conf){
        
        while((count = GetFLine(FileLine, pFile)) != EOF){//make sure were not at the end of the file
            if(count > 0){//make usre that we have data
-               ParseFileLine(FileLine, count, conf);//then parse said data into the conf struct
+               ParseFileLine(FileLine, count, conf, pFile);//then parse said data into the conf struct
            }
        }
         

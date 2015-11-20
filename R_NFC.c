@@ -65,7 +65,7 @@ bool NDDEF_DEGenerate(Credentials * Payload, mifareul_tag * tag, Config * cf){
         return(false);
     }
       
-    DPlegnth = decrypt(&buffer2[4], (int)buffer2[2], cf->Key, cf->IV,DecryptedBuffer);//decrypt the payload
+    DPlegnth = TS_decrypt(&buffer2[4], (int)buffer2[2], cf->key.key, cf->key.iv,DecryptedBuffer);//decrypt the payload
     
     memcpy(Payload,DecryptedBuffer, DPlegnth);//coppy the ndef payload to the credentials struct. Buffer[2] holds the message legnth.]
     return(true);//Its all good, let the caller know

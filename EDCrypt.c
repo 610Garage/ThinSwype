@@ -7,6 +7,9 @@
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <string.h>
+#include <stdbool.h>
+
+#include "EDCrypt.h"
 
 
 
@@ -16,7 +19,35 @@ void handleErrors(void)
   abort();
 }
 
-int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,  unsigned char *iv, unsigned char *ciphertext){
+bool keyGen(KEY *k, char * password){
+    const EVP_CIPHER *cipher;
+    const EVP_MD *dgst = NULL;
+    const unsigned char *salt = NULL;
+
+    OpenSSL_add_all_algorithms();
+
+    cipher = EVP_get_cipherbyname("aes-256-cbc");
+    if(!cipher) {
+        fprintf(stderr, "no such cipher\n");
+        return false;
+    }
+
+    dgst=EVP_get_digestbyname("md5");
+    if(!dgst) { 
+        fprintf(stderr, "no such digest\n"); 
+        return false; 
+    }
+
+    if(!EVP_BytesToKey(cipher, dgst, salt,(unsigned char *) password,strlen(password), 1, k->key, k->iv)){
+        fprintf(stderr, "EVP_BytesToKey failed\n");
+        return false;
+    }
+    k->KL = cipher->key_len;
+    k->IL = cipher->iv_len;
+}
+
+
+int TS_encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,  unsigned char *iv, unsigned char *ciphertext){
     
   EVP_CIPHER_CTX *ctx;
 
@@ -54,7 +85,7 @@ int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,  un
   return ciphertext_len;
 }
 
-int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
+int TS_decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
   unsigned char *iv, unsigned char *plaintext){
     
     EVP_CIPHER_CTX *ctx;

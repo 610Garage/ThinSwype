@@ -25,12 +25,13 @@ extern "C" {
 #include <inttypes.h>
 #include <stdbool.h>
     
+#include "EDCrypt.h"
+    
     typedef struct {
         int LogLevel;
         char RemoteStartCMD[Max_CMD_LEGNTH];
         char RemoteStopCMD[Max_CMD_LEGNTH];
-        unsigned char Key[32];
-        unsigned char IV[16];
+        KEY key;
     } Config;
     
 void NewConfig();
