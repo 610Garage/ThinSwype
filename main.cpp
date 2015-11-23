@@ -20,9 +20,10 @@ static ReaderTag RT;//contains libnfcs context, device, and tag info
 mifareul_tag mtDump;//varible that stores the data on the tag
 
 Credentials crd;//holds the user name, password, and vm adress
-static Config conf; //holds the configuraton read from the config file, needs to be static. Mabey somthing else uses a varible called conf
+static Config conf; //holds the configuraton read from the config file, needs to be static. ?????
 
 static bool run = true;//keeps the main loop alive until we want IT DEAD!!!!!
+static _IO_FILE *console, *consoleC;
 
 
 void StartRDesktop(Credentials *crd, Config *cf){//Well, its the whole reason for the app, lets get to it.
@@ -31,7 +32,7 @@ void StartRDesktop(Credentials *crd, Config *cf){//Well, its the whole reason fo
     //the comand with the loging credentials
     snprintf(cmd,200,cf->RemoteStartCMD,crd->user,crd->password, crd->VM);
     MyLog(cmd,3);//Log, just incase stuff goes goofy
-    popen(cmd, "r");//Exicute the comand and be amazed AT THE POWER OF THE TAG!!!
+    console = popen(cmd, "r");//Exicute the comand and be amazed AT THE POWER OF THE TAG!!!
     //while(1);
 }
 
@@ -41,7 +42,14 @@ void StopRDesktop(Config *cf){//
     //The death comands
     snprintf(cmd,200,cf->RemoteStopCMD);
     MyLog(cmd,3);//Log, just incase stuff goes goofy
-    popen(cmd, "r");//Exicute the comand to exicute the remote desktop
+    consoleC = popen(cmd, "r");//Exicute the comand to exicute the remote desktop
+    sleep(1);
+    if(console != NULL){
+        pclose(console);
+    }
+    if(consoleC != NULL){
+        pclose(consoleC);
+    }
 }
 
 static void stop_polling(int sig){//sombody wants out, lets close out nicely
@@ -68,6 +76,7 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
     signal(SIGINT, stop_polling);//register the exit function
     
     readConfig(&conf);//get the configuration
+    LogInit(&conf);
     
     
     nfc_init(&RT.context);//init libnfc
