@@ -5,3 +5,5 @@ Conects ThinPi to VM via a nfc card
 
 Requires libnfc, wich can be found here: github.com/nfc-tools/libnfc
 ThinPi can be found here: 610bob.com/ThinPI
+
+Built with Netbeans.
