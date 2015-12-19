@@ -4,8 +4,12 @@
  *
  * Created on November 12, 2015, 8:41 PM
  */
+
+#define VERSION "0.02"
+
 #include <signal.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <nfc/nfc.h>
 
@@ -25,6 +29,7 @@ static Config conf; //holds the configuraton read from the config file, needs to
 static bool run = true;//keeps the main loop alive until we want IT DEAD!!!!!
 static _IO_FILE *console, *consoleC;
 
+struct timespec SleepTime;
 
 void StartRDesktop(Credentials *crd, Config *cf){//Well, its the whole reason for the app, lets get to it.
     char cmd[200];// temp holding buffer for the comand to be exicuted
@@ -43,7 +48,7 @@ void StopRDesktop(Config *cf){//
     snprintf(cmd,200,cf->RemoteStopCMD);
     MyLog(cmd,3);//Log, just incase stuff goes goofy
     consoleC = popen(cmd, "r");//Exicute the comand to exicute the remote desktop
-    sleep(1);
+    nanosleep((const struct timespec[]){{0, 100}}, NULL);
     if(console != NULL){
         pclose(console);
     }
@@ -75,6 +80,28 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
     
     signal(SIGINT, stop_polling);//register the exit function
     
+    if(argc > 1){
+        if(strlen(argv[1]) > 1){
+            printf("\nThinSwype version=%s\nC= New Config\n?=help\n\n",VERSION);
+        }else{
+            switch(argv[1][0]){
+                case 'C':
+                    NewConfig(&conf);
+                    break;
+                case 'c':
+                    NewConfig(&conf);
+                    break;
+                case '?':
+                    printf("\nThinSwype version=%s\nC= New Config\n?=help\n\n",VERSION);
+                    break;
+                default:
+                    printf("\nThinSwype version=%s\nC= New Config\n?=help\n\n",VERSION);
+                    break;                
+            }
+        }
+        exit(EXIT_SUCCESS);//exit, its all good
+    }
+    
     readConfig(&conf);//get the configuration
     LogInit(&conf);
     
@@ -102,7 +129,7 @@ int main(int argc, char** argv) {//Realy, realy, you need a coment for this? Go 
                             MyLog("Card credentials are good", 3);//yup, good credentials, tell the world, well the log anyway.
                             
                             StopRDesktop(&conf);//kill any running remote desktops
-                            sleep(1);//give it a second..... literly
+                            nanosleep((const struct timespec[]){{0, 500}}, NULL);//give it a second..... literly
                             StartRDesktop(&crd, &conf);//start the remote desktop with the new credentials
                             MyLog("VM loded, all done", 3);//tell the log, if anyone cares
                         }
