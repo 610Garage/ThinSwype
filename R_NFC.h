@@ -34,7 +34,7 @@
           nfc_context *context;
         } ReaderTag;
 
-        #define uiPollNr 20
+        #define uiPollNr 0xFF
         #define uiPeriod 2
         #define szModulations 2
 
