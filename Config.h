@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 #define DEFUALT_LOG_LEVEL 1
-#define Defualt_RemoteStartCMD "startx /usr/bin/nice -n 18 /usr/bin/rdesktop -a 24 -x 6 -P -r sound:local -u \"%s\" -p \"%s\" -f \"%s\" 2>&1"
+#define Defualt_RemoteStartCMD "startx /usr/bin/ionice -c 1 -n 1 /usr/bin/nice -n 2 /usr/bin/rdesktop -a 24 -x 6 -P -r sound:local -u \"%s\" -p \"%s\" -f \"%s\" 2>&1"
 #define DEFUALT_REMOTE_STOP_CMD "pkill -15 rdesktop"
 
 #define CONFIG_FOLDER "/usr/ThinSwype"
@@ -34,8 +34,8 @@ extern "C" {
         KEY key;
     } Config;
     
-void NewConfig();
 bool readConfig(Config * conf);
+void NewConfig(Config * conf);
 
 
 #ifdef	__cplusplus
